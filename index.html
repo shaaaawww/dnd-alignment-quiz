@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="theme-color" content="#121821" />
+<meta name="description" content="Thirty moral dilemmas reveal your D&D alignment and a six-trait character profile, with a compact, offline-friendly fantasy assessment." />
+<title>D&D Alignment Assessment | The Adventurer's Moral Compass</title>
+<style>
+:root {
+  color-scheme:dark;
+  --bg:#10151d; --panel:#1a222d; --panel-2:#202a36; --line:#384453;
+  --ink:#f2eee5; --muted:#aeb7bf; --subtle:#788997; --gold:#deb67a;
+  --gold-dim:#c79b5d; --glow:#deb67a24; --good:#7cbea4; --evil:#c58c91;
+  --serif:Georgia,"Times New Roman",serif;
+  --sans:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+* { box-sizing:border-box; }
+html { background:var(--bg); }
+body {
+  min-height:100vh; margin:0; color:var(--ink); font:13px/1.44 var(--sans);
+  background:radial-gradient(ellipse 65% 40% at 50% -2%,#2f3042 0%,transparent 80%),
+             linear-gradient(120deg,transparent 43%,#ffffff04 50%,transparent 57%),var(--bg);
+}
+button, input { font:inherit; }
+button { cursor:pointer; }
+button:focus-visible, .choice:has(input:focus-visible) { outline:2px solid var(--gold);outline-offset:3px; }
+button:disabled { cursor:not-allowed;opacity:.38; }
+.hidden { display:none !important; }
+.shell { width:min(1192px,calc(100% - 36px));margin:0 auto;padding:17px 0 19px; }
+.masthead { display:flex;justify-content:space-between;align-items:center;gap:30px;margin:0 0 13px; }
+.brand { display:flex;gap:16px;align-items:center;min-width:0; }
+.emblem { width:46px;height:46px;flex:0 0 auto;border:1px solid #b89560;border-radius:13px;display:grid;place-items:center;box-shadow:inset 0 0 0 4px #deb67a0a,0 8px 25px #0004;background:#302b2a; }
+.emblem span { font-family:var(--serif);font-size:28px;color:var(--gold);line-height:1; }
+.overline { color:var(--gold);font-size:9.5px;font-weight:800;letter-spacing:.19em;text-transform:uppercase;margin:0 0 3px; }
+h1,h2,h3,p { margin-top:0; }
+h1 { font:normal 29px/1.08 var(--serif);margin:0;letter-spacing:-.028em; }
+h1 em { font-weight:normal;color:var(--gold);font-style:normal; }
+.mast-sub { text-align:right;color:var(--muted);max-width:360px;line-height:1.35; }
+.mast-sub strong { display:block;color:var(--ink);font-size:11px;letter-spacing:.05em;margin-bottom:4px; }
+.mast-sub span {font-size:11px;}
+.panel { position:relative;overflow:hidden;background:linear-gradient(160deg,#1f2834,var(--panel) 60%);border:1px solid var(--line);border-radius:17px;box-shadow:0 18px 55px #04070b66; }
+.panel:before { content:"";display:block;height:2px;background:linear-gradient(90deg,transparent,var(--gold-dim),transparent); }
+.panel-padding {padding:18px 24px 15px;}
+.panel-top { display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:9px; }
+.kicker {font-size:10px;letter-spacing:.16em;font-weight:800;color:var(--gold);text-transform:uppercase;}
+.counter {font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums;}
+.progress-track {height:4px;background:#34404c;border-radius:6px;overflow:hidden;margin-bottom:20px;}
+.progress-fill {height:100%;width:0;background:linear-gradient(90deg,#b58a54,#efcc8b);transition:width .18s ease;}
+.quiz-layout {display:grid;grid-template-columns:minmax(240px,.77fr) minmax(0,1.23fr);gap:31px;align-items:start;min-height:230px;}
+.situation {padding:4px 2px 0 0;}
+.section-label {font-size:10px;font-weight:750;color:var(--subtle);letter-spacing:.13em;text-transform:uppercase;}
+h2#question {font:normal clamp(19px,2vw,25px)/1.33 var(--serif);letter-spacing:-.015em;margin:12px 0 13px;overflow-wrap:anywhere;}
+.instructions {font-size:11px;color:var(--muted);line-height:1.45;max-width:310px;}
+.choices {margin:0;padding:0;min-width:0;border:0;display:grid;gap:8px;}
+.choice {display:flex;align-items:center;gap:12px;min-width:0;min-height:45px;padding:9px 12px;border:1px solid #3e4a58;background:#222b38;border-radius:10px;cursor:pointer;transition:background .13s,border-color .13s;}
+.choice:hover {border-color:#ab966e;background:#29333d;}
+.choice.is-selected {border-color:var(--gold);background:#deb67a18;box-shadow:inset 0 0 0 1px #deb67a26;}
+.choice input {width:17px;height:17px;accent-color:var(--gold);flex:0 0 auto;margin:0;}
+.choice-key {color:var(--gold);font-size:10px;font-weight:800;flex:0 0 14px;}
+.choice-text {font-size:12.7px;line-height:1.35;}
+.control-row {display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:20px;padding-top:14px;border-top:1px solid var(--line);}
+.button {border:1px solid #56616c;border-radius:8px;color:var(--ink);background:#2b3542;min-height:35px;padding:7px 13px;font-size:12px;font-weight:650;}
+.button:hover:not(:disabled) {background:#36414e;}
+.button.primary {background:var(--gold);color:#201c17;border-color:var(--gold);font-weight:800;}
+.button.primary:hover:not(:disabled) {background:#edc992;}
+.saved {color:var(--subtle);font-size:10px;text-align:center;}
+.nav-header {display:flex;justify-content:space-between;gap:10px;align-items:center;margin:18px 0 8px;}
+.nav-header span:first-child {font-size:9.5px;color:var(--subtle);font-weight:750;letter-spacing:.14em;text-transform:uppercase;}
+.nav-header span:last-child {font-size:10px;color:var(--muted);}
+.nav {display:grid;grid-template-columns:repeat(30,minmax(0,1fr));gap:5px;}
+.nav button {padding:0;min-width:0;height:28px;border:1px solid #46505b;border-radius:5px;color:var(--subtle);font-size:10px;background:#202935;font-variant-numeric:tabular-nums;}
+.nav button.complete {background:#4b4233;color:#f0d6a6;border-color:#76613f;}
+.nav button.active {border-color:var(--gold);color:#1b1a17;background:var(--gold);font-weight:900;}
+.footnote {display:flex;justify-content:space-between;gap:20px;margin:10px 3px 0;color:#87939e;font-size:10px;}
+/* Compact results dashboard: synopsis on the left, six scored facets on the right. */
+.result-head {display:flex;justify-content:space-between;align-items:end;gap:12px;padding-bottom:12px;border-bottom:1px solid var(--line);}
+.result-head h2 {font:normal 37px/1.05 var(--serif);letter-spacing:-.03em;color:var(--gold);margin:7px 0 0;}
+.result-lead {text-align:right;max-width:330px;}
+.result-lead strong {font-size:12px;display:block;margin-bottom:4px;}
+.result-lead p {color:var(--muted);font-size:11px;margin:0;}
+.result-body {display:grid;grid-template-columns:minmax(0,.94fr) minmax(0,1.06fr);gap:28px;margin-top:14px;}
+.h3 {font-size:10px;text-transform:uppercase;letter-spacing:.15em;font-weight:800;color:var(--gold);margin:0 0 12px;}
+.axis-group {display:grid;gap:11px;grid-template-columns:1fr 1fr;margin-bottom:16px;}
+.axis-card {padding:12px;border:1px solid var(--line);border-radius:9px;background:#202a36;}
+.axis-heading {display:flex;justify-content:space-between;gap:10px;align-items:baseline;}
+.axis-heading strong {font-size:12px;}
+.axis-heading span {color:var(--gold);font-weight:750;font-size:11px;white-space:nowrap;}
+.axis-ends,.trait-ends {display:flex;justify-content:space-between;color:#98a6b1;font-size:9.5px;margin-top:5px;}
+.meter {position:relative;height:5px;border-radius:5px;background:linear-gradient(90deg,#6682a2,#777883 50%,#c9a16a);margin-top:12px;}
+.meter.moral-meter {background:linear-gradient(90deg,#b87880,#777883 50%,#6da891);}
+.meter:after {content:"";position:absolute;left:50%;top:-3px;height:11px;border-left:1px solid #ddd9d07a;}
+.dot {position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:11px;height:11px;background:#f2d6a4;border:2px solid #242733;border-radius:50%;box-shadow:0 0 0 1px #f2d6a4;z-index:2;}
+.matrix {display:grid;grid-template-columns:repeat(3,1fr);gap:5px;}
+.cell {background:#202a36;border:1px solid #40505d;border-radius:6px;min-height:46px;display:grid;place-items:center;padding:5px 2px;color:#9eacb9;text-align:center;font-size:10.5px;line-height:1.23;}
+.cell.highlight {background:#64543c;border-color:var(--gold);color:#fff5df;font-weight:800;box-shadow:inset 0 0 0 1px #b58a54;}
+.cell.alternative {border-style:dashed;border-color:#a79a83;color:#ded4bf;}
+.interpretation {font-size:11.5px;color:#bec7cd;line-height:1.47;margin:14px 0 0;}
+.trait-intro {font-size:10px;color:var(--muted);margin:-6px 0 12px;}
+.traits {display:grid;gap:8px;}
+.trait-row {min-width:0;}
+.trait-heading {display:flex;justify-content:space-between;align-items:baseline;gap:8px;}
+.trait-heading strong {font-size:11.5px;font-weight:730;}
+.trait-heading span {font-size:10px;color:var(--gold);font-variant-numeric:tabular-nums;}
+.trait-track {height:6px;margin-top:6px;border-radius:6px;background:linear-gradient(90deg,#455a6a,#55616d 50%,#b79b71);position:relative;}
+.trait-track:after {content:"";position:absolute;left:50%;height:10px;top:-2px;border-left:1px solid #ffffff60;}
+.trait-dot {position:absolute;top:50%;left:50%;width:10px;height:10px;border:2px solid var(--panel);border-radius:50%;background:#f4d7a3;transform:translate(-50%,-50%);box-shadow:0 0 0 1px var(--gold);}
+.results-actions {display:flex;justify-content:space-between;gap:9px;flex-wrap:wrap;margin-top:13px;padding-top:12px;border-top:1px solid var(--line);}
+.results-actions .left {display:flex;gap:9px;flex-wrap:wrap;}
+.disclaimer {color:var(--subtle);font-size:10px;margin:8px 1px 0;}
+.toast {position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:5;border:1px solid #76613f;background:#292c2d;color:var(--ink);padding:9px 15px;border-radius:9px;box-shadow:0 7px 24px #0008;}
+@media (max-width:900px) {
+ .nav {grid-template-columns:repeat(15,minmax(0,1fr));}
+ .quiz-layout {grid-template-columns:minmax(210px,.84fr) minmax(0,1.16fr);gap:20px;}
+ .result-body {gap:16px;}
+ .axis-group {grid-template-columns:1fr;}
+}
+@media (max-width:680px) {
+ .shell {width:calc(100% - 22px);padding:13px 0 22px;}
+ .masthead {align-items:flex-start;gap:8px;margin-bottom:13px;}
+ .emblem {width:36px;height:36px;border-radius:9px;}
+ .emblem span {font-size:22px;}
+ .brand {gap:10px;}
+ h1 {font-size:22px;}
+ .mast-sub {display:none;}
+ .panel-padding {padding:15px;}
+ .quiz-layout,.result-body {grid-template-columns:1fr;gap:12px;min-height:0;}
+ .progress-track {margin-bottom:13px;}
+ h2#question {font-size:21px;margin:8px 0 8px;}
+ .instructions {display:none;}
+ .choice {min-height:43px;padding:8px 10px;}
+ .choice-text {font-size:12px;}
+ .control-row {margin-top:13px;}
+ .saved {max-width:125px;}
+ .nav {grid-template-columns:repeat(10,minmax(0,1fr));}
+ .footnote {line-height:1.4;}
+ .result-head {align-items:start;}
+ .result-head h2 {font-size:30px;}
+ .result-lead {max-width:160px;}
+ .axis-group {grid-template-columns:1fr 1fr;}
+ .result-body {gap:19px;}
+ .trait-row {margin-bottom:2px;}
+}
+@media (max-width:360px) {
+ .nav {grid-template-columns:repeat(6,minmax(0,1fr));}
+ .axis-group {grid-template-columns:1fr;}
+ .result-head {display:block;}
+ .result-lead {text-align:left;margin-top:12px;max-width:unset;}
+}
+@media (prefers-reduced-motion:reduce) {*,*::before,*::after {transition:none!important;scroll-behavior:auto!important;}}
+@media print {
+ :root {color-scheme:light;--bg:#fff;--ink:#111;--muted:#444;--line:#888;--panel:#fff;--panel-2:#fff;--gold:#634319;--subtle:#555;}
+ body {background:#fff;color:#111;}
+ .shell {width:100%;margin:0;padding:0;}
+ .panel {box-shadow:none;background:#fff;}
+ .masthead,.results-actions,.disclaimer,.footnote {display:none;}
+ .result-head h2 {color:#222;}
+ .axis-card,.cell {background:#fff;color:#222;}
+}
+</style>
+</head>
+<body>
+<div class="shell">
+  <header class="masthead">
+    <div class="brand"><div class="emblem" aria-hidden="true"><span>✦</span></div><div><p class="overline">The Adventurer's Moral Compass</p><h1>D&amp;D Alignment <em>Assessment</em></h1></div></div>
+    <div class="mast-sub"><strong>30 DILEMMAS &nbsp;·&nbsp; 6 TRAITS &nbsp;·&nbsp; 9 ALIGNMENTS</strong><span>Find your character's moral compass through decisions, not labels.</span></div>
+  </header>
+  <main>
+    <section class="panel" id="quiz" aria-label="D&D alignment questionnaire">
+      <div class="panel-padding">
+        <div class="panel-top"><span class="kicker" id="counter">Dilemma 01 / 30</span><span class="counter" id="progress-text">0 of 30 answered</span></div>
+        <div class="progress-track" role="progressbar" aria-label="Quiz completion" aria-valuemin="0" aria-valuemax="30" aria-valuenow="0" id="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+        <div class="quiz-layout">
+          <div class="situation"><span class="section-label">The situation</span><h2 id="question"></h2><p class="instructions">Choose what your character would actually do. No choice is automatically right or wrong.</p></div>
+          <fieldset class="choices" id="choices"><legend class="hidden">Choose your answer</legend></fieldset>
+        </div>
+        <div class="control-row">
+          <button class="button" id="prev" type="button">← Previous</button>
+          <span class="saved" id="save-status">Answers saved on this device</span>
+          <button class="button primary" id="next" type="button">Next dilemma →</button>
+        </div>
+        <div class="nav-header"><span>Jump to a question</span><span id="remaining">30 remaining</span></div>
+        <nav class="nav" id="nav" aria-label="Question navigation"></nav>
+      </div>
+    </section>
+    <section class="panel hidden" id="results" aria-label="Alignment results" aria-live="polite">
+      <div class="panel-padding">
+        <div class="result-head">
+          <div><span class="kicker">Your character profile</span><h2 id="alignment">True Neutral</h2></div>
+          <div class="result-lead"><strong id="clarity">Alignment tendency</strong><p id="secondary"></p></div>
+        </div>
+        <div class="result-body">
+          <div>
+            <h3 class="h3">Two Alignment Axes</h3>
+            <div class="axis-group">
+              <div class="axis-card"><div class="axis-heading"><strong id="order-label">Order</strong><span id="order-score">50 / 100</span></div><div class="meter"><span class="dot" id="order-dot"></span></div><div class="axis-ends"><span>Chaotic</span><span>Lawful</span></div></div>
+              <div class="axis-card"><div class="axis-heading"><strong id="moral-label">Morality</strong><span id="moral-score">50 / 100</span></div><div class="meter moral-meter"><span class="dot" id="moral-dot"></span></div><div class="axis-ends"><span>Evil</span><span>Good</span></div></div>
+            </div>
+            <h3 class="h3">Nine-Alignment Map</h3>
+            <div class="matrix" id="matrix" aria-label="Nine Dungeons and Dragons alignments"></div>
+            <p class="interpretation" id="interpretation"></p>
+          </div>
+          <div>
+            <h3 class="h3">Six-Trait Profile</h3>
+            <p class="trait-intro">Five targeted dilemmas per trait. Scores show relative leanings, not probabilities.</p>
+            <div class="traits" id="trait-bars"></div>
+          </div>
+        </div>
+        <div class="results-actions">
+          <div class="left"><button class="button" type="button" id="review">← Review answers</button><button class="button" type="button" id="download">Download profile .txt</button></div>
+          <button class="button primary" type="button" id="restart">Start again ↻</button>
+        </div>
+        <p class="disclaimer">A fictional roleplaying assessment based on authored scoring rules—not a validated personality test. Scores are descriptive scales, not confidence probabilities.</p>
+      </div>
+    </section>
+  </main>
+  <div class="footnote"><span>THE ALIGNMENT CODEX · VERSION 3.1</span><span>Offline-ready · No tracking · Saves locally when permitted</span></div>
+</div>
+<div class="toast hidden" id="toast" role="status"></div>
+<script>
+'use strict';
+const QUESTIONS = [{"prompt":"A kingdom's laws are generally fair, but one law prevents you from helping a family in immediate danger.","choices":["Follow the law while urgently seeking an authorized exception.","Break the law, then accept responsibility for doing so.","Find an unofficial workaround that avoids openly violating it.","Ignore the law and help without concern for the consequences."],"trait":"authority","values":[2,-1,1,-2]},{"prompt":"You find a valuable heirloom belonging to a wealthy stranger who will never know you found it.","choices":["Return it without expecting anything.","Return it if the owner offers a reasonable reward.","Keep it unless you learn its loss causes serious hardship.","Sell it and use the proceeds for your own priorities."],"trait":"harm","values":[2,1,0,-2]},{"prompt":"Your commander orders a retreat, leaving a small group of civilians exposed to an approaching enemy.","choices":["Follow the order and request a rescue operation through command.","Disobey and organize an immediate rescue.","Stay behind secretly with volunteers while the army withdraws.","Retreat with the army, preserving your ability to help later."],"trait":"obligation","values":[2,-2,-1,1]},{"prompt":"A rival adventurer saves your life, then asks you to help them accomplish a goal you strongly oppose.","choices":["Repay the debt through a different service.","Help them only with parts of the goal you can accept.","Decline and consider the debt settled by circumstance.","Help them accomplish it because a life debt must be honored."],"trait":"obligation","values":[1,0,-2,2]},{"prompt":"A remote settlement has survived for centuries by following strict ancestral customs.","choices":["Preserve its traditions unless the community formally changes them.","Encourage residents to question customs that limit their choices.","Leave its customs alone unless they directly harm someone.","Challenge the customs openly to test whether they deserve respect."],"trait":"authority","values":[2,-1,0,-2]},{"prompt":"You possess a cure for a deadly illness, but there is only enough for one person.","choices":["Give it to the person with the greatest medical need.","Give it to the person most likely to save other lives.","Give it to someone you personally love.","Exchange it for resources that will secure your future."],"trait":"compassion","values":[2,2,1,-2]},{"prompt":"A respected judge consistently issues lawful but excessively harsh punishments.","choices":["Seek reform through appeals and established legal channels.","Publicly organize resistance to the judge's decisions.","Quietly help prisoners escape punishments you consider unjust.","Work with the judge when useful, while protecting yourself from their authority."],"trait":"authority","values":[2,-1,-2,0]},{"prompt":"Your party discovers an abandoned fortress that could become a secure base.","choices":["Create a charter defining ownership, duties, and leadership.","Let members use the fortress freely without formal rules.","Establish only the minimum agreements needed to prevent disputes.","Claim command because someone must make the final decisions."],"trait":"structure","values":[2,-2,1,1]},{"prompt":"An enemy soldier is wounded and defenseless after a battle. Your supplies are limited.","choices":["Treat them even if it delays your journey.","Provide basic aid without seriously endangering your companions.","Leave them supplies and continue toward your objective.","Take their useful equipment and leave them behind."],"trait":"compassion","values":[2,1,0,-2]},{"prompt":"A trusted friend reveals a secret that could damage your reputation but is factually true.","choices":["Accept their right to speak truthfully, even if it hurts.","Confront them privately and ask why they broke your confidence.","Retaliate by revealing a secret of comparable importance.","Use your influence to prevent further disclosures."],"trait":"obligation","values":[0,2,-2,-1]},{"prompt":"A merchant offers you a profitable contract that is legal but relies on poorly paid workers.","choices":["Decline unless working conditions improve.","Accept and use part of the profits to support the workers.","Accept because the workers voluntarily agreed to the terms.","Negotiate a larger share of the profits for yourself."],"trait":"selfinterest","values":[2,1,-1,-2]},{"prompt":"You are elected leader of a guild whose members frequently disagree.","choices":["Establish formal procedures and enforce decisions consistently.","Let members organize themselves with minimal leadership.","Use flexible agreements that can change with circumstances.","Make decisions personally and judge each case on its merits."],"trait":"structure","values":[2,-2,0,-1]},{"prompt":"A captured assassin offers information that could prevent another attack in exchange for freedom.","choices":["Arrange a binding agreement with enforceable conditions.","Release them if their information proves reliable.","Refuse the deal and seek the information another way.","Promise freedom to obtain the information, then reconsider afterward."],"trait":"harm","values":[2,1,1,-2]},{"prompt":"You discover a secret passage into a heavily guarded archive containing information you need.","choices":["Apply for legitimate access, even if it takes longer.","Enter secretly because the information is important.","Persuade an authorized official to grant you access.","Use the passage if the benefits outweigh the risk of punishment."],"trait":"authority","values":[2,-2,1,-1]},{"prompt":"A neighboring village suffers a famine while your own community has only a modest surplus.","choices":["Share enough food to prevent deaths, accepting hardship at home.","Share what can be spared without endangering your community.","Offer food in exchange for future labor or repayment.","Keep the surplus to protect your community against uncertainty."],"trait":"compassion","values":[2,1,0,-1]},{"prompt":"A magical oath binds you to serve a ruler who has recently become tyrannical.","choices":["Seek a legitimate release from the oath.","Break the oath and oppose the ruler.","Interpret the oath narrowly while undermining the ruler's abuses.","Continue serving until doing so becomes personally dangerous."],"trait":"obligation","values":[2,-2,0,1]},{"prompt":"A thief steals from a powerful noble and distributes the money among impoverished families.","choices":["Require restitution while addressing the families' needs.","Protect the thief because the redistribution helped people.","Judge the theft according to its consequences and circumstances.","Support the thief if the noble's wealth was acquired unjustly."],"trait":"structure","values":[2,-1,0,-2]},{"prompt":"You can gain political influence by publicly supporting a policy you privately oppose.","choices":["Refuse to misrepresent your convictions.","Support it temporarily to gain influence for later reforms.","Support it if the resulting influence benefits you and your allies.","Remain publicly neutral rather than take either position."],"trait":"selfinterest","values":[2,1,-2,0]},{"prompt":"An ancient forest is threatened by a growing town that needs timber and farmland.","choices":["Negotiate sustainable boundaries that protect both communities.","Prioritize the forest even if the town must relocate.","Prioritize the town's survival, accepting some permanent forest loss.","Support whichever arrangement offers the greatest advantage to your group."],"trait":"compassion","values":[2,1,1,-2]},{"prompt":"Your party agreed to divide treasure equally, but you contributed far more to the expedition.","choices":["Honor the original agreement without requesting changes.","Ask everyone to voluntarily reconsider the distribution.","Quietly keep an additional valuable item as compensation.","Demand a larger share based on your contribution."],"trait":"selfinterest","values":[2,1,-2,-1]},{"prompt":"A corrupt official can be removed by exposing evidence obtained through an illegal search.","choices":["Present the evidence to an authorized investigator.","Publish the evidence regardless of how it was obtained.","Use the evidence to pressure the official into resigning.","Keep the evidence as leverage for future dealings."],"trait":"authority","values":[2,-2,0,-1]},{"prompt":"You can prevent a violent rebellion by granting immunity to leaders responsible for serious abuses.","choices":["Reject immunity and insist on legal accountability.","Grant immunity if it reliably prevents substantial loss of life.","Offer limited immunity in exchange for reparations and disarmament.","Accept the arrangement if it strengthens your position afterward."],"trait":"harm","values":[0,2,2,-2]},{"prompt":"A mysterious traveler offers you great power, but accepting it creates an obligation to obey one future command.","choices":["Refuse because the obligation is undefined.","Accept only after negotiating strict limits on the command.","Accept because you trust yourself to handle the consequences.","Accept while privately planning to evade the obligation if necessary."],"trait":"obligation","values":[2,2,-1,-2]},{"prompt":"A community votes to exile an unpopular resident who has broken no laws.","choices":["Respect the vote but demand a formal appeal process.","Defend the resident's right to remain despite the vote.","Persuade the resident to leave voluntarily to avoid conflict.","Accept the decision because the community's stability matters most."],"trait":"harm","values":[1,2,0,-1]},{"prompt":"Your group must cross dangerous territory, and a local guide demands an unusually high fee.","choices":["Pay the agreed fee if the guide fulfills the contract.","Negotiate fairly, recognizing the danger the guide faces.","Find another route rather than accept the guide's terms.","Agree to the price while planning to renegotiate once the danger has passed."],"trait":"selfinterest","values":[1,2,0,-2]},{"prompt":"A defeated enemy ruler offers to surrender peacefully if allowed to retain some authority.","choices":["Accept under a binding treaty with independent oversight.","Remove them and let the population select new leadership.","Allow them limited authority if it prevents further bloodshed.","Replace them with a leader loyal to you."],"trait":"structure","values":[2,-2,1,1]},{"prompt":"A sacred relic could save a city, but using it would permanently destroy a religious community's most important shrine.","choices":["Ask the community for consent and respect its decision.","Use the relic if it is the only way to save the city.","Search for alternatives until the danger makes delay impossible.","Take the relic secretly to prevent opposition from delaying action."],"trait":"compassion","values":[1,2,2,0]},{"prompt":"You discover that your party's leader has concealed a serious mistake that endangered everyone.","choices":["Require a full accounting under the group's agreed rules.","Confront the leader and let the party decide how to respond.","Keep the secret if revealing it would fracture the party.","Use the knowledge to secure greater influence over decisions."],"trait":"harm","values":[2,2,0,-2]},{"prompt":"You have the opportunity to overthrow an oppressive government, but the resulting power vacuum could cause civil war.","choices":["Build a legitimate replacement government before acting.","Support the uprising because oppression must be resisted.","Pursue gradual reform until the risks of revolution decrease.","Support whichever faction offers the most secure future."],"trait":"structure","values":[2,-2,1,0]},{"prompt":"After a long campaign, you are offered authority over a conquered kingdom.","choices":["Establish laws, institutions, and limits on your own power.","Transfer power to local communities as soon as practical.","Rule temporarily until stability and basic protections are restored.","Keep authority and use the kingdom's resources to secure your ambitions."],"trait":"selfinterest","values":[2,2,1,-2]}];
+const FACETS = [
+ {id:'authority',name:'Authority',axis:'order',low:'Independent judgment',high:'Institutional trust'},
+ {id:'structure',name:'Structure',axis:'order',low:'Flexible approaches',high:'Consistent systems'},
+ {id:'obligation',name:'Obligation',axis:'order',low:'Personal discretion',high:'Duty & promises'},
+ {id:'compassion',name:'Compassion',axis:'moral',low:'Detached',high:'Compassionate'},
+ {id:'selfinterest',name:'Self-interest',axis:'moral',low:'Personal gain',high:'Sacrifice for others'},
+ {id:'harm',name:'Harm & mercy',axis:'moral',low:'Exploitation',high:'Restraint & mercy'}
+];
+const STORAGE_KEY = 'dnd-alignment-v31-answers';
+const OLD_KEY = 'dnd-alignment-answers';
+const el = id => document.getElementById(id);
+const clamp = (v,min,max) => Math.max(min,Math.min(max,v));
+let current=0, resultsData=null;
+function validAnswers(a){return Array.isArray(a)&&a.length===QUESTIONS.length&&a.every(x=>x===null||Number.isInteger(x)&&x>=0&&x<4);}
+function recoverAnswers(){
+ try {
+  const updated=JSON.parse(localStorage.getItem(STORAGE_KEY)||'null');
+  if(validAnswers(updated)) return updated;
+  const old=JSON.parse(localStorage.getItem(OLD_KEY)||'null');
+  if(validAnswers(old)) return old;
+ } catch(_) {el('save-status').textContent='Browser saving unavailable';}
+ return Array(QUESTIONS.length).fill(null);
+}
+let answers=recoverAnswers();
+function save(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(answers));}catch(_){el('save-status').textContent='Browser saving unavailable';}}
+function countAnswered(){return answers.filter(x=>x!==null).length;}
+function showToast(message){const t=el('toast');t.textContent=message;t.classList.remove('hidden'); /* Toast persists until next interaction. */}
+function clearToast(){el('toast').classList.add('hidden');}
+function render(){
+ clearToast();
+ const n=countAnswered(),q=QUESTIONS[current];
+ el('counter').textContent=`Dilemma ${String(current+1).padStart(2,'0')} / 30`;
+ el('progress-text').textContent=`${n} of 30 answered`;
+ el('remaining').textContent=`${30-n} remaining`;
+ el('progress-fill').style.width=`${100*n/30}%`;
+ el('progress-track').setAttribute('aria-valuenow',n);
+ el('question').textContent=q.prompt;
+ const choices=el('choices');choices.replaceChildren();
+ q.choices.forEach((choice,i)=>{
+   const label=document.createElement('label');label.className='choice'+(answers[current]===i?' is-selected':'');
+   const radio=document.createElement('input');radio.type='radio';radio.name='answer';radio.value=String(i);radio.checked=answers[current]===i;
+   radio.addEventListener('change',()=>{answers[current]=i;save();render();});
+   const letter=document.createElement('span');letter.className='choice-key';letter.textContent='ABCD'[i];
+   const copy=document.createElement('span');copy.className='choice-text';copy.textContent=choice;
+   label.append(radio,letter,copy);choices.append(label);
+ });
+ el('prev').disabled=current===0;
+ el('next').disabled=answers[current]===null;
+ el('next').textContent=current===29?'Reveal alignment →':'Next dilemma →';
+ const nav=el('nav');nav.replaceChildren();
+ QUESTIONS.forEach((_,i)=>{
+   const b=document.createElement('button');b.type='button';b.textContent=i+1;
+   b.className=(answers[i]!==null?'complete ':'')+(current===i?'active':'');
+   b.setAttribute('aria-label',`Question ${i+1}${answers[i]!==null?', answered':', unanswered'}`);
+   if(current===i)b.setAttribute('aria-current','step');
+   b.addEventListener('click',()=>{current=i;render();});nav.append(b);
+ });
+}
+function axisName(v,positive,negative){return v>.25?positive:v<-.25?negative:'Neutral';}
+function alignmentName(order,morality){return order==='Neutral'&&morality==='Neutral'?'True Neutral':order+' '+morality;}
+function distanceToInterval(x,a,b){return x<a?a-x:x>b?x-b:0;}
+function closestAlternative(x,y,primary){
+ const options=[];
+ const thirds=[['Lawful',.25,1],['Neutral',-.25,.25],['Chaotic',-1,-.25]];
+ const morals=[['Good',.25,1],['Neutral',-.25,.25],['Evil',-1,-.25]];
+ for(const [o,lo,hi] of thirds)for(const [m,ml,mh] of morals){
+  const name=alignmentName(o,m);if(name===primary)continue;
+  const dx=distanceToInterval(x,lo,hi),dy=distanceToInterval(y,ml,mh);
+  options.push({name,d:Math.hypot(dx,dy)});
+ }
+ options.sort((a,b)=>a.d-b.d||a.name.localeCompare(b.name));
+ return options[0].name;
+}
+function scoreQuiz(){
+ const totals=Object.fromEntries(FACETS.map(f=>[f.id,{sum:0,count:0}]));
+ QUESTIONS.forEach((q,i)=>{
+  const entry=totals[q.trait];entry.sum+=q.values[answers[i]];entry.count++;
+ });
+ const traits=FACETS.map(f=>{
+  const {sum,count}=totals[f.id];
+  return {...f,raw:sum,normalized:sum/(2*count),value:Math.round(50+sum/(2*count)*50),count};
+ });
+ const order=traits.filter(t=>t.axis==='order').reduce((s,t)=>s+t.normalized,0)/3;
+ const moral=traits.filter(t=>t.axis==='moral').reduce((s,t)=>s+t.normalized,0)/3;
+ const oName=axisName(order,'Lawful','Chaotic');
+ const mName=axisName(moral,'Good','Evil');
+ const primary=alignmentName(oName,mName);
+ const alternative=closestAlternative(order,moral,primary);
+ const boundaryDistance=v=>Math.min(Math.abs(v+.25),Math.abs(v-.25));
+ const near=Math.min(boundaryDistance(order),boundaryDistance(moral));
+ const clarity=near<.08?'Borderline alignment':near<.16?'Mixed tendencies':'Clearer tendencies';
+ return {traits,order,moral,oName,mName,primary,alternative,clarity};
+}
+function meter(dotId,v){el(dotId).style.left=`${clamp(50+50*v,0,100)}%`;}
+function renderMatrix(data){
+ const box=el('matrix');box.replaceChildren();
+ for(const moral of ['Good','Neutral','Evil'])for(const order of ['Lawful','Neutral','Chaotic']){
+  const name=alignmentName(order,moral),cell=document.createElement('div');
+  cell.className='cell'+(name===data.primary?' highlight':name===data.alternative?' alternative':'');
+  cell.textContent=name;cell.title=name+(name===data.primary?' (your result)':name===data.alternative?' (closest alternative)':'');
+  box.append(cell);
+ }
+}
+function renderFacets(data){
+ const list=el('trait-bars');list.replaceChildren();
+ data.traits.forEach(t=>{
+  const row=document.createElement('div');row.className='trait-row';
+  const head=document.createElement('div');head.className='trait-heading';
+  const label=document.createElement('strong');label.textContent=t.name;
+  const number=document.createElement('span');number.textContent=`${t.value} / 100`;
+  head.append(label,number);
+  const track=document.createElement('div');track.className='trait-track';
+  const dot=document.createElement('span');dot.className='trait-dot';dot.style.left=`${t.value}%`;track.append(dot);
+  const ends=document.createElement('div');ends.className='trait-ends';
+  const low=document.createElement('span');low.textContent=t.low;
+  const high=document.createElement('span');high.textContent=t.high;
+  ends.append(low,high);row.append(head,track,ends);list.append(row);
+ });
+}
+function resultsText(d){
+ const descriptions={
+  Lawful:'You lean toward clear procedures, reliable commitments, and accountable institutions.',
+  Chaotic:'You lean toward individual judgment and the freedom to challenge imposed restrictions.',
+  Neutral:'You balance formal structures against individual discretion depending on context.',
+  Good:'Your answers emphasize welfare, mercy, and restraint over personal advantage.',
+  Evil:'Your answers more often favor personal advantage or control even at others\' expense.',
+  'Moral Neutral':'Your choices balance concern for others with personal interests and practical costs.'
+ };
+ return descriptions[d.oName]+' '+descriptions[d.mName==='Neutral'?'Moral Neutral':d.mName]+' These six facets explain how similar alignments can come from different motivations.';
+}
+function showResults(){
+ if(!answers.every(v=>v!==null)){
+  current=answers.findIndex(v=>v===null);render();showToast('Answer the remaining questions before viewing your alignment.');return;
+ }
+ resultsData=scoreQuiz();const d=resultsData;
+ el('alignment').textContent=d.primary;
+ el('clarity').textContent=d.clarity;
+ el('secondary').textContent=`Closest alternative: ${d.alternative}`;
+ el('order-label').textContent=d.oName+' alignment';
+ el('moral-label').textContent=d.mName+' morality';
+ el('order-score').textContent=`${Math.round(50+50*d.order)} / 100`;
+ el('moral-score').textContent=`${Math.round(50+50*d.moral)} / 100`;
+ meter('order-dot',d.order);meter('moral-dot',d.moral);
+ renderMatrix(d);renderFacets(d);
+ el('interpretation').textContent=resultsText(d);
+ el('quiz').classList.add('hidden');el('results').classList.remove('hidden');
+ window.scrollTo({top:0,behavior:'smooth'});
+}
+function downloadProfile(){
+ if(!resultsData)return;
+ const d=resultsData;
+ const lines=[
+  'D&D ALIGNMENT ASSESSMENT — CHARACTER PROFILE','',
+  `Primary alignment: ${d.primary}`,
+  `Closest alternative: ${d.alternative}`,
+  `Alignment clarity: ${d.clarity}`,
+  `Order score: ${Math.round(50+d.order*50)}/100 (Chaotic → Lawful)`,
+  `Morality score: ${Math.round(50+d.moral*50)}/100 (Evil → Good)`,'',
+  'SIX UNDERLYING TRAITS',
+  ...d.traits.map(t=>`${t.name}: ${t.value}/100 (${t.low} → ${t.high})`),'',
+  'INTERPRETATION',resultsText(d),'',
+  'YOUR ANSWERS',
+  ...answers.map((a,i)=>`${String(i+1).padStart(2,'0')}. ${QUESTIONS[i].prompt}\n    ${'ABCD'[a]}. ${QUESTIONS[i].choices[a]}`),'',
+  'This is a fictional roleplaying tool, not a validated personality test.'
+ ];
+ const blob=new Blob([lines.join('\n')],{type:'text/plain;charset=utf-8'});
+ const url=URL.createObjectURL(blob);
+ const link=document.createElement('a');link.href=url;link.download='dnd-alignment-character-profile.txt';
+ document.body.append(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+el('prev').addEventListener('click',()=>{if(current>0){current--;render();}});
+el('next').addEventListener('click',()=>{
+ if(answers[current]===null)return;
+ if(current<QUESTIONS.length-1){current++;render();}else showResults();
+});
+el('review').addEventListener('click',()=>{el('results').classList.add('hidden');el('quiz').classList.remove('hidden');render();});
+el('download').addEventListener('click',downloadProfile);
+el('restart').addEventListener('click',()=>{
+ if(!window.confirm('Clear all 30 answers and start again?'))return;
+ answers=Array(30).fill(null);current=0;resultsData=null;save();
+ el('results').classList.add('hidden');el('quiz').classList.remove('hidden');render();
+});
+document.addEventListener('keydown',event=>{
+ if(el('quiz').classList.contains('hidden')||event.altKey||event.ctrlKey||event.metaKey||event.target.closest('button, input, select, textarea'))return;
+ const n=Number(event.key);
+ if(n>=1&&n<=4){answers[current]=n-1;save();render();}
+ else if(event.key==='ArrowRight'&&answers[current]!==null&&current<29){current++;render();}
+ else if(event.key==='ArrowLeft'&&current>0){current--;render();}
+});
+render();
+</script>
+</body></html>
